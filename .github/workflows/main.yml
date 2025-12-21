@@ -1,10 +1,16 @@
-name: Test Self-Hosted Runner 
-on: 
-push: 
-branches: - main 
-jobs: 
-build: 
-runs-on: self-hosted 
-steps: - name: Checkout code 
-uses: actions/checkout@v3 - name: Print message 
-run: echo "Hello from self-hosted runner!"
+name: Test Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Print message
+        shell: cmd
+        run: echo "Hello from self-hosted runner!"
