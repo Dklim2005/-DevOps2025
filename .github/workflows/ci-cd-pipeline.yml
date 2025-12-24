@@ -1,0 +1,109 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE_NAME: "my-app"
+  DOCKER_TAG: ${{ github.sha }}
+
+jobs:
+  build:
+    name: 🔨 Сборка приложения
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout кода
+        uses: actions/checkout@v4
+      
+      - name: Имитация сборки
+        run: |
+          echo "🔨 Сборка приложения..."
+          echo "Имитация сборки (mvn build, npm install, etc.)"
+          echo "Сборка завершена успешно"
+          
+      - name: Сохранение артефактов
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: .
+          retention-days: 7
+
+  unit-tests:
+    name: 🧪 Unit-тесты
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout кода
+        uses: actions/checkout@v4
+      
+      - name: Запуск unit-тестов
+        run: |
+          echo "🧪 Запуск unit-тестов..."
+          echo "Все тесты пройдены успешно"
+
+  lint-tests:
+    name: 📏 Линтинг
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout кода
+        uses: actions/checkout@v4
+      
+      - name: Запуск линтера
+        run: |
+          echo "📏 Запуск линтера..."
+          echo "Проверка кода завершена"
+
+  build-docker:
+    name: 🐳 Сборка Docker-образа
+    runs-on: ubuntu-latest
+    needs: [unit-tests, lint-tests]
+    
+    steps:
+      - name: Checkout кода
+        uses: actions/checkout@v4
+      
+      - name: Сборка Docker-образа
+        run: |
+          echo "🐳 Сборка Docker-образа..."
+          echo "Имитация сборки образа: ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}"
+          # Если нужна реальная сборка, раскомментируйте:
+          # docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }} .
+          echo "Образ собран успешно"
+
+  deploy-staging:
+    name: 🚀 Деплой на Staging
+    runs-on: ubuntu-latest
+    needs: build-docker
+    environment:
+      name: staging
+      url: https://staging.example.com
+    
+    steps:
+      - name: Имитация деплоя
+        run: |
+          echo "🚀 Деплой на staging-окружение..."
+          echo "Имитация деплоя (scp, kubectl apply, etc.)"
+          echo "Деплой завершен успешно"
+
+  deploy-production:
+    name: 🏭 Деплой на Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment:
+      name: production
+      url: https://example.com
+    
+    steps:
+      - name: Имитация деплоя на продакшн
+        run: |
+          echo "🏭 Деплой на production..."
+          echo "Внимание! Это production-окружение"
+          echo "Деплой на production завершен"
